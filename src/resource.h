@@ -99,7 +99,7 @@ namespace cg
 			out.r = in.x;
 			out.g = in.y;
 			out.b = in.z;
-			return color{};
+			return out;
 		};
 		float3 to_float3() const
 		{

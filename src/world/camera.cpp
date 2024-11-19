@@ -21,7 +21,6 @@ void cg::world::camera::set_position(float3 in_position)
 {
 	// TODO Lab: 1.04 Implement `cg::world::camera` class
 	position = in_position;
-
 }
 
 void cg::world::camera::set_theta(float in_theta)
@@ -34,14 +33,12 @@ void cg::world::camera::set_phi(float in_phi)
 {
 	// TODO Lab: 1.04 Implement `cg::world::camera` class
 	phi = in_phi * static_cast<float>(M_PI) / 180.f;
-
 }
 
 void cg::world::camera::set_angle_of_view(float in_aov)
 {
 	// TODO Lab: 1.04 Implement `cg::world::camera` class
 	angle_of_view = in_aov * static_cast<float>(M_PI) / 180.f;
-
 }
 
 void cg::world::camera::set_height(float in_height)
@@ -49,7 +46,6 @@ void cg::world::camera::set_height(float in_height)
 	// TODO Lab: 1.04 Implement `cg::world::camera` class
 	height = in_height;
 	aspect_ratio = width / height;
-
 }
 
 void cg::world::camera::set_width(float in_width)
@@ -63,7 +59,6 @@ void cg::world::camera::set_z_near(float in_z_near)
 {
 	// TODO Lab: 1.04 Implement `cg::world::camera` class
 	z_near = in_z_near;
-
 }
 
 void cg::world::camera::set_z_far(float in_z_far)
@@ -95,18 +90,28 @@ const DirectX::XMMATRIX cg::world::camera::get_dxm_view_matrix() const
 {
 	// TODO Lab: 3.08 Implement `get_dxm_view_matrix`, `get_dxm_projection_matrix`, and `get_dxm_mvp_matrix` methods of `camera`
 	return  DirectX::XMMatrixIdentity();
+	DirectX::XMFLOAT3 eye_position{position.x, position.y, position.z};
+	DirectX::XMFLOAT3 eye_direction{get_direction().x, get_direction().y, get_direction().z};
+	DirectX::XMFLOAT3 up_direction{get_up().x, get_up().y, get_up().z};
+	return DirectX::XMMatrixLookToRH(
+	DirectX::XMLoadFloat3(&eye_position),
+	DirectX::XMLoadFloat3(&eye_direction),
+	DirectX::XMLoadFloat3(&up_direction));
+	// return  DirectX::XMMatrixIdentity();
 }
 
 const DirectX::XMMATRIX cg::world::camera::get_dxm_projection_matrix() const
 {
 	// TODO Lab: 3.08 Implement `get_dxm_view_matrix`, `get_dxm_projection_matrix`, and `get_dxm_mvp_matrix` methods of `camera`
 	return  DirectX::XMMatrixIdentity();
+	return  DirectX::XMMatrixPerspectiveFovRH(angle_of_view, aspect_ratio, z_near, z_far);
 }
 
 const DirectX::XMMATRIX camera::get_dxm_mvp_matrix() const
 {
 	// TODO Lab: 3.08 Implement `get_dxm_view_matrix`, `get_dxm_projection_matrix`, and `get_dxm_mvp_matrix` methods of `camera`
 	return  DirectX::XMMatrixIdentity();
+	return  get_dxm_view_matrix() * get_dxm_projection_matrix();
 }
 #endif
 
@@ -119,7 +124,7 @@ const float4x4 cg::world::camera::get_projection_matrix() const
 		{0, f, 0, 0},
 		{0, 0, z_far/(z_near - z_far), -1},
 		{0, 0, z_near * z_far / (z_near - z_far), 0}
-		};
+	};
 }
 
 const float3 cg::world::camera::get_position() const
@@ -134,7 +139,7 @@ const float3 cg::world::camera::get_direction() const
 	return float3{
 		std::sin(theta) * std::cos(phi),
 		std::sin(phi),
-		-std::cos(theta)*std::cos(phi)
+		-std::cos(theta) * std::cos(phi)
 	};
 }
 
